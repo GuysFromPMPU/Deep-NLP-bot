@@ -1,6 +1,8 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
+from booking import book
+
 
 # Функция для непосредственной обработки диалога.
 def handle_dialog(request, response, user_storage):
@@ -21,6 +23,10 @@ def handle_dialog(request, response, user_storage):
         response.set_buttons(buttons)
 
         return response, user_storage
+
+    if request.has_lemmas("билет", "афиша", "купить"):
+        book(request, response, user_storage)
+        return response, request
 
     # Обрабатываем ответ пользователя.
     if request.command.lower() in ['ладно', 'куплю', 'покупаю', 'хорошо']:
