@@ -17,7 +17,7 @@ def handle_dialog(request, response, user_storage):
         response.set_variants("Узнать афишу")
         return response, user_storage
 
-    if request.has_lemmas("билет", "афиша", "купить") or user_storage.get("buying") == True:
+    if request.has_lemmas("билет", "афиша", "купить", "расписание") or user_storage.get("buying") == True:
         return book(request, response, user_storage)
 
     return get_info(request, response, user_storage)
