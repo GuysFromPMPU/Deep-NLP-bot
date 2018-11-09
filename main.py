@@ -9,12 +9,12 @@ import logging
 from alice_sdk import AliceRequest, AliceResponse
 
 # Импортируем модуль с логикой игры
-from common import handle_dialog
+from dialogs import handle_dialog
 
 # Импортируем подмодули Flask для запуска веб-сервиса.
 from flask import Flask, request
 app = Flask(__name__)
-
+app.config['TESTING'] = True
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -34,8 +34,7 @@ def main():
     user_id = alice_request.user_id
 
     alice_response, session_storage[user_id] = handle_dialog(
-        alice_request, alice_response, session_storage.get(user_id)
-    )
+        alice_request, alice_response, session_storage.get(user_id))
 
     logging.info('Response: {}'.format(alice_response))
 
