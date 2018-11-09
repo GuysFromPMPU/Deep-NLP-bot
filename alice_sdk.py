@@ -39,13 +39,32 @@ class AliceRequest(object):
         return str(self._request_dict)
 
     def __has_type(self, request_type):
-        return any(entity['type'] == request_type for entity in self._request_dict['request']['nlu']['entities'])
+        return any(
+            entity['type'] == request_type
+            for entity in self._request_dict['request']['nlu']['entities'])
 
     def has_fio(self):
         return self.__has_type("YANDEX.FIO")
-    
+
     def has_date(self):
         return self.__has_type("YANDEX.DATETIME")
+
+    def __get_type(self, request_type):
+        entities = [
+            entity['value'] if entity['type'] == request_type else None
+            for entity in self._request_dict['request']['nlu']['entities']
+        ]
+        return list(filter(None.__ne__, entities))
+
+    def get_date(self):
+        if not self.has_date():
+            return []
+        return self.__get_type("YANDEX.DATETIME")
+
+    def get_fio(self):
+        if not self.has_fio():
+            return []
+        return self.__get_type("YANDEX.FIO")
 
     def has_lemmas(self, *lemmas):
         return any(

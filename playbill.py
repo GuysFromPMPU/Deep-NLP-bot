@@ -19,6 +19,6 @@ def find_concerts(composers, start_date=None, end_date=None):
         res = res[res["дата, гггг-мм-дд"] <= end_date]
 
     res = res[res['программа'].str.contains('|'.join(composers))]
-    return res.to_dict
+    return res.to_dict(orient="list")
 
 # print(find_concerts(["Свиридов", "Чайковский"], datetime.datetime(2019, 2, 24, 0, 0)))
