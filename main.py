@@ -11,6 +11,10 @@ from alice_sdk import AliceRequest, AliceResponse
 # Импортируем модуль с логикой игры
 from dialogs import handle_dialog
 
+from info import get_info
+
+from nerpavlov import getNer
+
 # Импортируем подмодули Flask для запуска веб-сервиса.
 from flask import Flask, request
 app = Flask(__name__)
@@ -20,7 +24,6 @@ logging.basicConfig(level=logging.DEBUG)
 
 # Хранилище данных о сессиях.
 session_storage = {}
-
 
 # Задаем параметры приложения Flask.
 @app.route("/", methods=['POST'])
@@ -39,6 +42,11 @@ def main():
     logging.info('Response: {}'.format(alice_response))
 
     return alice_response.dumps()
+
+@app.route("/iOS", methods=['POST'])
+def iOSEndpoint():
+    text = request.json['request']
+    return get_info(text)
 
 
 if __name__ == '__main__':

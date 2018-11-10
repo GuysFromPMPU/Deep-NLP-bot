@@ -1,0 +1,5 @@
+ner_path:
+    http://localhost:5002/ner
+
+squad_path:
+    http://localhost:5001/squad
