@@ -1,3 +1,3 @@
 @echo off
-python -m deeppavlov riseapi pavlovConfigs/squad_ru.json
-python -m deeppavlov riseapi pavlovConfigs/ner_rus.json
+python -m deeppavlov riseapi pavlov_configs/squad_ru.json
+python -m deeppavlov riseapi pavlov_configs/ner_rus.json
