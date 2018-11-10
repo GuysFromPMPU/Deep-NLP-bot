@@ -16,7 +16,6 @@ composers_texts = {
 
 def alice_info_endpoint(request, response, user_storage):
     composers = request.get_last_names(capitalize=False) & set(validComposers)
-    
     if len(composers) != 1:
         response.set_text(get_replica('undefined'))
         return response, user_storage
