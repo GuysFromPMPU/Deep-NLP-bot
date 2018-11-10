@@ -15,7 +15,7 @@ composers_texts = {
 }
 
 def alice_info_endpoint(request, response, user_storage):
-    composer = get_ner(request.command)
+    composer = get_ner(request)
     if composer is None:
         response.set_text(get_replica('undefined'))
         return response, user_storage
@@ -40,8 +40,7 @@ def get_ner(request):
         return None
     df = df[df[1] != 'O']
     #Get persons from text
-    df = df[df[1].str.contains("PER", na=False)]
-    df[0] = df[df[1] == "B-PER"][0].apply(lambda word: morph.parse(word)[0].normal_form)
+    df[0] = df[0].apply(lambda word: morph.parse(word)[0].normal_form)
     df = df.loc[df[0].isin(validComposers)]
     #taking first composer
     if len(df) == 0:
