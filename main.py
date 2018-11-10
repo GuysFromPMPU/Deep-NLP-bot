@@ -18,6 +18,7 @@ from dialogs import handle_dialog
 from info import get_info, get_ner
 from answers import get_replica
 from faq import get_faq_response
+from playbill import get_all_playbill
 
 app = Flask(__name__)
 app.config['TESTING'] = True
@@ -54,6 +55,10 @@ def processText():
         logging.info(f"composer not found")
         return get_faq_response(text)
     return get_info(text, composer)
+
+@app.route("/playbill")
+def get_playbill():
+    return get_all_playbill()
 
 if __name__ == '__main__':
     app.run()

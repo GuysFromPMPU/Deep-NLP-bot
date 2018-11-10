@@ -1,4 +1,7 @@
+import datetime
+
 from enum import Enum, auto
+from calendar import monthrange
 
 import pymorphy2
 
@@ -15,3 +18,6 @@ class BuyStatus(Enum):
 def right_form_from_number(word, number):
     word = morph.parse(word)[0]
     return word.make_agree_with_number(number).word
+
+def last_day_in_month(date):
+    last_day = calendar.monthrange(date.year, date.month)[1]
