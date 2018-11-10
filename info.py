@@ -19,7 +19,7 @@ def alice_info_endpoint(request, response, user_storage):
     if len(composers) != 1:
         response.set_text(get_replica('undefined'))
         return response, user_storage
-    response.set_text(get_info(request, *composers))
+    response.set_text(get_info(request.command, *composers))
 
     return response, user_storage
 
