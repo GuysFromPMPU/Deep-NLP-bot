@@ -1,7 +1,11 @@
+import datetime
+import humanize
 import logging
 
 from answers import get_replica
 from playbill import find_concerts
+
+humanize.i18n.activate('ru_RU')
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -18,12 +22,11 @@ def send_response(response, user_storage, tag):
 
 
 def book(request, response, user_storage):
-    user_storage.setdefault("buying", True)
-    user_storage.setdefault("composers", composers.copy())
-    logging.error(f"\n\n\n{' '.join(user_storage['composers'])}\n\n\n")
+    user_storage["buying"] = True
 
-    if not user_storage.setdefault('asked', False):
+    if not user_storage.get('asked'):
         user_storage["asked"] = True
+        user_storage["composers"] = composers.copy()
         return send_response(response, user_storage, "select-concert")
 
     last_names = [
@@ -31,32 +34,43 @@ def book(request, response, user_storage):
     ]
     last_names = set(filter(None, last_names))
 
-    user_storage['composers'] &= last_names
+    user_storage['composers'] = last_names
+
+    logging.debug(
+        f"Composers for request {' '.join(user_storage['composers'])}")
 
     if len(user_storage['composers']) == 0:
         user_storage['composers'] = composers.copy()
         return send_response(response, user_storage,
                              'select-concert-composer-unknown')
 
-    date = None
+    start_date = datetime.date.today()
+    end_date = None
     if request.has_date():
-        date = request.get_date()[0]
+        start_date = request.get_date()[0]
 
-    concerts = find_concerts(user_storage['composers'], date)
-    if not concerts:
+    logging.debug(f"start date: {humanize.naturaltime(start_date)}")
+
+    concerts = find_concerts(user_storage['composers'], start_date, end_date)
+
+    if concerts.empty:
         return send_response(response, user_storage, 'select-concert-empty')
 
-    response.set_text(str('\n\n\n'.join(concerts["title"])))
-    return response, user_storage
+    text = f"Нашлось {len(concerts)} концертов. Скажи номер понравившегося!\n"
+    buttons = []
 
-    if not user_storage["composer"]:
-        for composer in composers:
-            if (request.has_lemmas(composer)):
-                user_storage["composer"] = composer
-                break
-        #else:
-        #return select_concert(response, user_storage)
+    humanize.i18n.activate('ru_RU')
 
-    response.set_text(f"Ты выбрал {user_storage['composer']}")
+    for i, (_, concert) in enumerate(concerts.iterrows()):
+        i += 1
+        buttons.append({
+            "title": str(i),
+            "url": concert["купить билет"],
+            "hide": True
+        })
+        text += f"\n{i} {concert['title']}, {humanize.naturaltime(concert['дата, гггг-мм-дд'])}"
 
+    logging.info(f"\n\nfound: {len(concerts['title'])}\n\n")
+    response.set_text(text)
+    response.set_buttons(buttons)
     return response, user_storage

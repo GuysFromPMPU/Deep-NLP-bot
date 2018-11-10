@@ -4,21 +4,19 @@ from __future__ import unicode_literals
 
 # Импортируем модули для работы с логами.
 import logging
+import random
+
+import yaml
+# Импортируем подмодули Flask для запуска веб-сервиса.
+from flask import Flask, request
 
 # Импортируем модуль для работы с API Алисы
 from alice_sdk import AliceRequest, AliceResponse
-
 # Импортируем модуль с логикой игры
 from dialogs import handle_dialog
-
 from info import get_info, get_ner
+from answers import get_replica
 
-import yaml
-import random
-
-
-# Импортируем подмодули Flask для запуска веб-сервиса.
-from flask import Flask, request
 app = Flask(__name__)
 app.config['TESTING'] = True
 
@@ -26,8 +24,6 @@ logging.basicConfig(level=logging.DEBUG)
 
 # Хранилище данных о сессиях.
 session_storage = {}
-
-composerDescriptions = yaml.load(open('dialogues.yaml', 'r', encoding="utf-8"))
 
 # Задаем параметры приложения Flask.
 @app.route("/", methods=['POST'])
@@ -58,7 +54,7 @@ def processText():
     text = request.json['request']
     composer = get_ner(text)
     if not composer:
-        return random.choice(composerDescriptions['undefined'])
+        return get_replica('undefined')
     return get_info(text, composer)
 
 if __name__ == '__main__':
