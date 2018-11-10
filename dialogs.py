@@ -14,7 +14,7 @@ def handle_dialog(request, response, user_storage):
         # Инициализируем сессию и поприветствуем его
         hello_text = get_replica("newcomer-hello")
         response.set_text(hello_text)
-        response.set_variants("Узнать афишу")
+        response.set_variants("Узнать афишу", "Ответы на часто задаваемые вопросы")
         return response, user_storage
 
     if request.has_lemmas("билет", "афиша", "купить", "расписание") or user_storage.get("buying") == True:

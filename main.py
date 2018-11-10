@@ -3,7 +3,8 @@
 from __future__ import unicode_literals
 
 # Импортируем модули для работы с логами.
-import logging
+import coloredlogs, logging
+coloredlogs.install()
 import random
 
 import yaml
@@ -42,12 +43,6 @@ def main():
     logging.info('Response: {}'.format(alice_response))
 
     return alice_response.dumps()
-
-@app.route("/iOS", methods=['POST'])
-def iOSEndpoint():
-    text = request.json['request']
-    return get_info(text)
-
 
 @app.route("/textProcessing", methods=['POST'])
 def processText():

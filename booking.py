@@ -1,6 +1,7 @@
 import datetime
 import humanize
-import logging
+import coloredlogs, logging
+coloredlogs.install()
 
 from answers import get_replica
 from playbill import find_concerts

@@ -2,7 +2,6 @@ import yaml
 import requests
 import pandas as pd
 import pymorphy2
-import tensorflow as tf
 morph = pymorphy2.MorphAnalyzer()
 
 composerDescriptions = yaml.load(open('composerDescriptions.yaml', 'r', encoding="utf-8"))

@@ -10,6 +10,8 @@ flask run --host="::"
 requirements:
 ```
 pip install pymorphy2[fast]
+pip install coloredlogs
+pip install humanize
 ```
 
 flask ssl:
