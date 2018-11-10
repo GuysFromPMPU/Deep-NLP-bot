@@ -17,6 +17,7 @@ from alice_sdk import AliceRequest, AliceResponse
 from dialogs import handle_dialog
 from info import get_info, get_ner
 from answers import get_replica
+from faq import get_faq_response
 
 app = Flask(__name__)
 app.config['TESTING'] = True
@@ -49,7 +50,7 @@ def processText():
     text = request.json['request']
     composer = get_ner(text)
     if not composer:
-        return get_replica('undefined')
+        return get_faq_response(text)
     return get_info(text, composer)
 
 if __name__ == '__main__':
