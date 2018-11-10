@@ -11,9 +11,11 @@ from alice_sdk import AliceRequest, AliceResponse
 # Импортируем модуль с логикой игры
 from dialogs import handle_dialog
 
-from info import get_info
+from info import get_info, get_ner
 
-from nerpavlov import getNer
+import yaml
+import random
+
 
 # Импортируем подмодули Flask для запуска веб-сервиса.
 from flask import Flask, request
@@ -24,6 +26,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 # Хранилище данных о сессиях.
 session_storage = {}
+
+composerDescriptions = yaml.load(open('dialogues.yaml', 'r', encoding="utf-8"))
 
 # Задаем параметры приложения Flask.
 @app.route("/", methods=['POST'])
@@ -48,6 +52,14 @@ def iOSEndpoint():
     text = request.json['request']
     return get_info(text)
 
+
+@app.route("/textProcessing", methods=['POST'])
+def processText():
+    text = request.json['request']
+    composer = get_ner(text)
+    if not composer:
+        return random.choice(composerDescriptions['undefined'])
+    return get_info(text, composer)
 
 if __name__ == '__main__':
     app.run()
