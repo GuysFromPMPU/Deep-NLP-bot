@@ -6,36 +6,40 @@ coloredlogs.install()
 from answers import get_replica
 from playbill import find_concerts
 from alice_sdk import AliceRequest, AliceResponse
-from common import right_form_from_number
-
+from common import right_form_from_number, BuyStatus
 
 humanize.i18n.activate('ru_RU')
 
-logging.basicConfig(level=logging.NOTSET)
+logging.basicConfig(level=logging.DEBUG)
 
 composers = {"Рахманинов", "Чайковский", "Свиридов"}
 
 date_variants = ["в следующем месяце", "в декабре"]
 
 
-def send_response(response, user_storage, tag):
-    unknown_text = get_replica(tag)
-    response.set_text(unknown_text)
-    response.set_variants(*composers, *date_variants)
+def send_response(response, user_storage, tag, add_variants=True):
+    answer_text = get_replica(tag)
+    response.set_text(answer_text)
+    if add_variants:
+        response.set_variants(*composers, *date_variants)
     return response, user_storage
 
 
-def book(request : AliceRequest, response : AliceResponse, user_storage):
-    user_storage["buying"] = True
-
-    if not user_storage.get('asked'):
-        user_storage["asked"] = True
+def book(request: AliceRequest, response: AliceResponse, user_storage):
+    if not user_storage.get('buy-status'):
+        user_storage["buy-status"] = BuyStatus.Choosing
         user_storage["composers"] = composers.copy()
         return send_response(response, user_storage, "select-concert")
 
+    if user_storage.get('buy-status') == BuyStatus.Selected:
+        user_storage.pop('buy-status')
+        return send_response(
+            response, user_storage, 'concert-selected', add_variants=False)
+
     last_names = request.get_last_names()
 
-    user_storage['composers'] &= last_names
+    if len(last_names):
+        user_storage['composers'] &= last_names
 
     logging.debug(
         f"Composers for request {' '.join(user_storage['composers'])}")
@@ -47,9 +51,16 @@ def book(request : AliceRequest, response : AliceResponse, user_storage):
 
     start_date = datetime.date.today()
     end_date = None
-    if request.has_date():
-        dates = request.get_date()
 
+    if request.has_date():
+        logging.error('has dates')
+        dates = request.get_date()
+        start = dates[0]
+        if 'month_is_relative' in start:
+            if start['month_is_relative'] == False:
+                logging.error('relative')
+            else:
+                logging.error('non relative')                
 
     logging.debug(f"start date: {humanize.naturaltime(start_date)}")
 
@@ -57,8 +68,9 @@ def book(request : AliceRequest, response : AliceResponse, user_storage):
 
     if concerts.empty:
         return send_response(response, user_storage, 'select-concert-empty')
+    logging.info(f"found: {concerts.shape[1]} concerts")
 
-    text = f"{'Нашлось' if len(concerts) > 1 else 'Нашелся'} {len(concerts)} {right_form_from_number('концерт', len(concerts))}. Скажи номер понравившегося!\n"
+    text = f"{'Нашлось' if len(concerts) > 1 else 'Нашёлся'} {len(concerts)} {right_form_from_number('концерт', len(concerts))}. Скажи номер понравившегося!\n"
     buttons = []
 
     humanize.i18n.activate('ru_RU')
@@ -72,7 +84,7 @@ def book(request : AliceRequest, response : AliceResponse, user_storage):
         })
         text += f"\n{i}. {concert['title']}, {humanize.naturaltime(concert['дата, гггг-мм-дд'])}"
 
-    logging.info(f"\n\nfound: {len(concerts['title'])}\n\n")
     response.set_text(text)
     response.set_buttons(buttons)
+    user_storage["buy-status"] = BuyStatus.Selected
     return response, user_storage

@@ -5,8 +5,11 @@ import pymorphy2
 morph = pymorphy2.MorphAnalyzer()
 
 class ChatStatus(Enum):
-    Buying = auto(),
-    FAQ = auto()
+    Buying = auto()
+
+class BuyStatus(Enum):
+    Choosing = auto(),
+    Selected = auto()
 
 
 def right_form_from_number(word, number):
