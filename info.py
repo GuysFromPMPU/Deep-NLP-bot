@@ -9,10 +9,6 @@ composerDescriptions = yaml.load(open('composerDescriptions.yaml', 'r', encoding
 pavlovUrls = yaml.load(open('urls.yaml', 'r', encoding="utf-8"))
 validComposers = ['рахманинов', 'чайковский']
 
-composers_texts = {
-    'чайковский': composerDescriptions['чайковский'],
-    'рахманинов': composerDescriptions['рахманинов']
-}
 
 def alice_info_endpoint(request, response, user_storage):
     composers = request.get_last_names(capitalize=False) & set(validComposers)

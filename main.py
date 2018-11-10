@@ -48,8 +48,10 @@ def main():
 @app.route("/textProcessing", methods=['POST'])
 def processText():
     text = request.json['request']
+    logging.info(f"text to answer: {text}")
     composer = get_ner(text)
     if not composer:
+        logging.info(f"composer not found")
         return get_faq_response(text)
     return get_info(text, composer)
 

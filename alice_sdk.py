@@ -101,7 +101,7 @@ class AliceResponse(object):
                                                                            1024]
 
     def set_variants(self, *variants):
-        buttons = [{'title': variant, 'hide': True} for variant in variants]
+        buttons = [{'title': variant, 'hide': False} for variant in variants]
         self.set_buttons(buttons)
 
     def set_buttons(self, buttons):
