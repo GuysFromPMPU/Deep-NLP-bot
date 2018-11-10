@@ -5,12 +5,15 @@ coloredlogs.install()
 
 from answers import get_replica
 from playbill import find_concerts
+from alice_sdk import AliceRequest, AliceResponse
+from common import right_form_from_number
+
 
 humanize.i18n.activate('ru_RU')
 
-logging.basicConfig(level=logging.DEBUG)
+logging.basicConfig(level=logging.NOTSET)
 
-composers = {"Рахманинов", "Чайковский"}
+composers = {"Рахманинов", "Чайковский", "Свиридов"}
 
 date_variants = ["в следующем месяце", "в декабре"]
 
@@ -22,7 +25,7 @@ def send_response(response, user_storage, tag):
     return response, user_storage
 
 
-def book(request, response, user_storage):
+def book(request : AliceRequest, response : AliceResponse, user_storage):
     user_storage["buying"] = True
 
     if not user_storage.get('asked'):
@@ -30,12 +33,9 @@ def book(request, response, user_storage):
         user_storage["composers"] = composers.copy()
         return send_response(response, user_storage, "select-concert")
 
-    last_names = [
-        fio.get("last_name", "").capitalize() for fio in request.get_fio()
-    ]
-    last_names = set(filter(None, last_names))
+    last_names = request.get_last_names()
 
-    user_storage['composers'] = last_names
+    user_storage['composers'] &= last_names
 
     logging.debug(
         f"Composers for request {' '.join(user_storage['composers'])}")
@@ -48,7 +48,8 @@ def book(request, response, user_storage):
     start_date = datetime.date.today()
     end_date = None
     if request.has_date():
-        start_date = request.get_date()[0]
+        dates = request.get_date()
+
 
     logging.debug(f"start date: {humanize.naturaltime(start_date)}")
 
@@ -57,7 +58,7 @@ def book(request, response, user_storage):
     if concerts.empty:
         return send_response(response, user_storage, 'select-concert-empty')
 
-    text = f"Нашлось {len(concerts)} концертов. Скажи номер понравившегося!\n"
+    text = f"{'Нашлось' if len(concerts) > 1 else 'Нашелся'} {len(concerts)} {right_form_from_number('концерт', len(concerts))}. Скажи номер понравившегося!\n"
     buttons = []
 
     humanize.i18n.activate('ru_RU')
@@ -69,7 +70,7 @@ def book(request, response, user_storage):
             "url": concert["купить билет"],
             "hide": True
         })
-        text += f"\n{i} {concert['title']}, {humanize.naturaltime(concert['дата, гггг-мм-дд'])}"
+        text += f"\n{i}. {concert['title']}, {humanize.naturaltime(concert['дата, гггг-мм-дд'])}"
 
     logging.info(f"\n\nfound: {len(concerts['title'])}\n\n")
     response.set_text(text)

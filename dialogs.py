@@ -1,9 +1,10 @@
 # coding: utf-8
 from __future__ import unicode_literals
 
-from booking import book
-from info import alice_info_endpoint
 from answers import get_replica
+from booking import book
+from common import ChatStatus
+from info import alice_info_endpoint
 
 
 # Функция для непосредственной обработки диалога.
@@ -19,7 +20,7 @@ def handle_dialog(request, response, user_storage):
 
     if request.has_lemmas("билет", "афиша", "купить", "расписание") or user_storage.get("buying") == True:
         return book(request, response, user_storage)
-    return alice_info_endpoint(request.command, response, user_storage)
+    return alice_info_endpoint(request, response, user_storage)
 
     # Обрабатываем ответ пользователя.
     if request.command.lower() in ['ладно', 'куплю', 'покупаю', 'хорошо']:

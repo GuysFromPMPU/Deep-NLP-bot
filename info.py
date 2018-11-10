@@ -15,12 +15,12 @@ composers_texts = {
 }
 
 def alice_info_endpoint(request, response, user_storage):
-    composer = get_ner(request)
-    if composer is None:
+    composers = request.get_last_names(capitalize=False) & set(validComposers)
+    
+    if len(composers) != 1:
         response.set_text(get_replica('undefined'))
         return response, user_storage
-        
-    response.set_text(get_info(request, composer))
+    response.set_text(get_info(request, *composers))
 
     return response, user_storage
 

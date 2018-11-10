@@ -66,6 +66,13 @@ class AliceRequest(object):
             return []
         return self.__get_type("YANDEX.FIO")
 
+    def get_last_names(self, capitalize=True):
+        last_names = [
+            fio.get("last_name", "").capitalize() for fio in self.get_fio()
+        ]
+        last_names = set(filter(None, last_names))
+        return last_names
+
     def has_lemmas(self, *lemmas):
         return any(
             morph.parse(item)[0].normal_form in self._lemmas
@@ -87,6 +94,11 @@ class AliceResponse(object):
 
     def set_text(self, text):
         self._response_dict['response']['text'] = text[:1024]
+
+    def add_text(self, text, begging=True):
+        self._response_dict['response'][
+            'text'] = f"{text} {self._response_dict['response']['text']}" [:
+                                                                           1024]
 
     def set_variants(self, *variants):
         buttons = [{'title': variant, 'hide': True} for variant in variants]
