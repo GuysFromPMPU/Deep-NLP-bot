@@ -69,7 +69,7 @@ class AliceRequest(object):
     def get_last_names(self, capitalize=True):
         last_names = [fio.get("last_name", "") for fio in self.get_fio()]
         if capitalize:
-            map(last_names, capitalize)
+            last_names = map(str.capitalize, last_names)
         last_names = set(filter(None, last_names))
         return last_names
 
