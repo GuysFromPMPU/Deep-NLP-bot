@@ -2,6 +2,7 @@ import yaml
 import requests
 import pandas as pd
 import pymorphy2
+from answers import get_replica
 morph = pymorphy2.MorphAnalyzer()
 
 composerDescriptions = yaml.load(open('composerDescriptions.yaml', 'r', encoding="utf-8"))
@@ -13,8 +14,14 @@ composers_texts = {
     'рахманинов': composerDescriptions['рахманинов']
 }
 
-def alice_info_endpoint(request, response, user_storage, composer="чайковский"):
+def alice_info_endpoint(request, response, user_storage):
+    composer = get_ner(request.command)
+    if composer is None:
+        response.set_text(get_replica('undefined'))
+        return response, user_storage
+        
     response.set_text(get_info(request, composer))
+
     return response, user_storage
 
 def get_info(request, composer="чайковский"):
