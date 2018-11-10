@@ -2,7 +2,7 @@ import yaml
 import requests
 import pandas as pd
 import pymorphy2
-from answers import get_replica
+from faq import get_faq_response
 morph = pymorphy2.MorphAnalyzer()
 
 composerDescriptions = yaml.load(open('composerDescriptions.yaml', 'r', encoding="utf-8"))
@@ -17,7 +17,7 @@ composers_texts = {
 def alice_info_endpoint(request, response, user_storage):
     composers = request.get_last_names(capitalize=False) & set(validComposers)
     if len(composers) != 1:
-        response.set_text(get_replica('undefined'))
+        response.set_text(get_faq_response(request.command))
         return response, user_storage
     response.set_text(get_info(request.command, *composers))
 
