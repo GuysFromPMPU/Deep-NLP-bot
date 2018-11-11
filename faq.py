@@ -8,5 +8,7 @@ def get_faq_response(content):
     response = build.dialog({'type': 'text', 'content': content}, random.randint(1, 101))
     if len(response.nlp.intents) == 0 or response.nlp.intents[0].confidence < 0.98:
         return get_replica('undefined')
+    if response.nlp.intents[0].slug == 'schedule':
+        return "dsdsad"
     return response.messages[0].content
 
