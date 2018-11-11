@@ -72,6 +72,9 @@ class AliceRequest(object):
         last_names = set(filter(None, last_names))
         return last_names
 
+    def get_tokens(self):
+        return self._request_dict["request"]["nlu"]["tokens"]
+
     def has_lemmas(self, *lemmas):
         return any(morph.parse(item)[0].normal_form in self._lemmas for item in lemmas)
 

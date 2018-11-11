@@ -14,7 +14,7 @@ validComposers = ['рахманинов', 'чайковский']
 def alice_info_endpoint(request, response, user_storage):
     composers = request.get_last_names(capitalize=False) & set(validComposers)
 
-    word_tokens = nltk.word_tokenize(request.command.lower())
+    word_tokens = request.get_tokens()
     if len(composers) == 1 or 'composer' in user_storage and 'он' in [morph.parse(word)[0].normal_form for word in word_tokens]:
         if len(composers) == 1:
             user_storage['composer'] = composers.pop()
