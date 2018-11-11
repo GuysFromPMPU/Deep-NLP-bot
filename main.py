@@ -79,9 +79,9 @@ def processText():
 @app.route("/playbill")
 def get_playbill():
     composer = unquote(request.args.get('composer'))
-    logging.error(composer)
-    if composer not in ["Чайковский", "Рахманинов"]:
+    if composer not in ["Чайковский", "Рахманинов", "Свиридов"]:
         return "error"
+    logging.error(composer)
     return get_all_playbill(composer)
 
 if __name__ == '__main__':

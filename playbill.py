@@ -1,6 +1,11 @@
 import operator
 import datetime
 
+import coloredlogs
+
+coloredlogs.install()
+logging.basicConfig(level=logging.DEBUG)
+
 import pandas as pd
 
 tea = pd.read_csv(open("Концерты Чайковский.csv", 'r', encoding='utf-8'), encoding="utf-8", parse_dates=[1, 2])
@@ -25,6 +30,7 @@ def find_concerts(composers, start_date=None, end_date=None):
 
 def get_all_playbill(composer):
     finded = find_concerts([composer])
+    logging.error(f"len of numbers {finded.shape[0]}")
     return finded.to_json(orient='records', force_ascii=False)
 
 # print(find_concerts(["Свиридов", "Чайковский"], datetime.datetime(2019, 2, 24, 0, 0)))
