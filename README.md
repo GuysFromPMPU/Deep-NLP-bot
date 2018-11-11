@@ -1,5 +1,7 @@
 # Bot for Moscow philharmonia
 ***
+[iOS app github repo](https://github.com/magauran/Chaikovsky)
+***
 How ro run Alice and REST API:
 * install requirements from `requirments.txt`
 * install [`deeppavlov`](https://github.com/deepmipt/DeepPavlov)
