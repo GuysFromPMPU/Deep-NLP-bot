@@ -29,9 +29,10 @@ def find_concerts(composers, start_date=None, end_date=None):
     
     return finded#.to_dict(orient="list")
 
-def get_all_playbill(composer):
-    finded = find_concerts([composer])
-    logging.error(f"len of numbers {finded.shape[0]}")
+def get_all_playbill(composer=["Чайковский", "Рахманинов", "Свиридов"]):
+    logging.error(f"request info for {' '.join(composer)}")
+    finded = find_concerts(composer)
+    logging.error(f"number of finded concerts {finded.shape[0]}")
     return finded.to_json(orient='records', force_ascii=False)
 
 # print(find_concerts(["Свиридов", "Чайковский"], datetime.datetime(2019, 2, 24, 0, 0)))
