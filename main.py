@@ -2,23 +2,28 @@
 # Импортирует поддержку UTF-8.
 from __future__ import unicode_literals
 
+import logging
+from urllib.parse import unquote
+
 # Импортируем модули для работы с логами.
-import coloredlogs, logging
-coloredlogs.install()
+import coloredlogs
+import nltk
 import pymorphy2
 # Импортируем подмодули Flask для запуска веб-сервиса.
 from flask import Flask, request
 
 # Импортируем модуль для работы с API Алисы
 from alice_sdk import AliceRequest, AliceResponse
+from answers import get_replica
 # Импортируем модуль с логикой игры
 from dialogs import handle_dialog
-from info import get_info, get_ner
-from answers import get_replica
 from faq import get_faq_response
+from info import get_info, get_ner
 from playbill import get_all_playbill
 
-import nltk
+coloredlogs.install()
+
+
 
 app = Flask(__name__)
 app.config['TESTING'] = True
@@ -73,7 +78,11 @@ def processText():
 
 @app.route("/playbill")
 def get_playbill():
-    return get_all_playbill()
+    composer = unquote(request.args.get('composer'))
+    logging.debug(composer)
+    if composer not in ["Чайковский", "Рахманинов"]:
+        return "error"
+    return get_all_playbill(composer)
 
 if __name__ == '__main__':
     app.run()
