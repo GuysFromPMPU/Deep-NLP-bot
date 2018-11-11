@@ -1,12 +1,13 @@
-import operator
 import datetime
+import logging
+import operator
 
 import coloredlogs
+import pandas as pd
 
 coloredlogs.install()
 logging.basicConfig(level=logging.DEBUG)
 
-import pandas as pd
 
 tea = pd.read_csv(open("Концерты Чайковский.csv", 'r', encoding='utf-8'), encoding="utf-8", parse_dates=[1, 2])
 rah = pd.read_csv(open("Концерты_Рахманинов.csv", 'r', encoding='utf-8'), encoding="utf-8", parse_dates=[1, 2])
