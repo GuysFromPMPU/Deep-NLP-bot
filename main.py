@@ -5,9 +5,7 @@ from __future__ import unicode_literals
 # Импортируем модули для работы с логами.
 import coloredlogs, logging
 coloredlogs.install()
-import random
-
-import yaml
+import pymorphy2
 # Импортируем подмодули Flask для запуска веб-сервиса.
 from flask import Flask, request
 
@@ -20,6 +18,8 @@ from answers import get_replica
 from faq import get_faq_response
 from playbill import get_all_playbill
 
+import nltk
+
 app = Flask(__name__)
 app.config['TESTING'] = True
 
@@ -27,6 +27,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 # Хранилище данных о сессиях.
 session_storage = {}
+
+composerContext = {}
 
 # Задаем параметры приложения Flask.
 @app.route("/", methods=['POST'])
@@ -51,10 +53,23 @@ def processText():
     text = request.json['request']
     logging.info(f"text to answer: {text}")
     composer = get_ner(text)
-    if not composer:
-        logging.info(f"composer not found")
-        return get_faq_response(text)
-    return get_info(text, composer)
+    global composerContext
+    morph = pymorphy2.MorphAnalyzer()
+    word_tokens = nltk.word_tokenize(text.lower())
+    if composer or request.json['id'] in list(composerContext.keys()) and 'он'\
+            in [morph.parse(word)[0].normal_form for word in word_tokens]:
+        if composer:
+            composerContext[request.json['id']] = composer
+        else:
+            composer = composerContext[request.json['id']]
+            for idx, word in enumerate(word_tokens):
+                if morph.parse(word)[0].normal_form == 'он':
+                    word_tokens[idx] = composer
+            text = " ".join(word_tokens)
+        return get_info(text, composer)
+    composerContext.pop(request.json['id'], None)
+    logging.info(f"composer not found")
+    return get_faq_response(text)
 
 @app.route("/playbill")
 def get_playbill():
