@@ -57,18 +57,26 @@ def processText():
     text = request.json['request']
     logging.info(f"text to answer: {text}")
     word_tokens = nltk.word_tokenize(text.lower())
+    morph = pymorphy2.MorphAnalyzer()
+    word_normal_forms = [morph.parse(word)[0].normal_form for word in word_tokens]
     composer = get_composers(word_tokens)
     global composerContext
-    morph = pymorphy2.MorphAnalyzer()
+
+    if any(keyword in word_normal_forms for keyword in ["афиша", "расписание"]):
+        if composer:
+            return get_all_playbill([composer.capitalize()], to_json=False)
+        else:
+            return get_all_playbill(to_json=False)
+
     if composer or request.json['id'] in list(composerContext.keys()) and 'он'\
-            in [morph.parse(word)[0].normal_form for word in word_tokens]:
+            in word_normal_forms:
         if composer:
             composerContext[request.json['id']] = composer
         else:
             composer = composerContext[request.json['id']]
-            for idx, word in enumerate(word_tokens):
-                if morph.parse(word)[0].normal_form == 'он':
-                    word_tokens[idx] = composer
+            for i in range(len(word_tokens)):
+                if word_normal_forms[i] == 'он':
+                    word_tokens[i] = composer
             text = " ".join(word_tokens)
         return get_info(text, composer)
     composerContext.pop(request.json['id'], None)
