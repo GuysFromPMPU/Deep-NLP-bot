@@ -88,7 +88,7 @@ def book(request: AliceRequest, response: AliceResponse, user_storage):
 
     if concerts.empty:
         return send_response(response, user_storage, "select-concert-empty")
-    logging.info(f"found: {concerts.shape[0]} concerts")
+    logging.debug(f"found: {concerts.shape[0]} concerts")
 
     text = f"{'Нашлось' if len(concerts) > 1 else 'Нашёлся'} {len(concerts)} {right_form_from_number('концерт', len(concerts))}. Скажи номер понравившегося!\n"
     buttons = []

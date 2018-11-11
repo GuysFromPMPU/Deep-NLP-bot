@@ -40,19 +40,19 @@ def find_concerts(composers, start_date=None, end_date=None):
 
 
 def get_all_playbill(composer=["Чайковский", "Рахманинов", "Свиридов"], to_json=True):
-    logging.error(f"request info for {' '.join(composer)}")
+    logging.debug(f"request info for {' '.join(composer)}")
     finded = find_concerts(composer)
-    logging.error(f"number of finded concerts {finded.shape[0]}")
+    logging.debug(f"number of finded concerts {finded.shape[0]}")
     if to_json:
         return finded.to_json(orient="records", force_ascii=False)
-        
+
     finded = finded.head(3)
     text = f"{'Нашлось' if len(finded) > 1 else 'Нашёлся'} {len(finded)} {right_form_from_number('ближайших', len(finded))} {right_form_from_number('концерт', len(finded))}\n"
     for i, (_, concert) in enumerate(finded.iterrows()):
         i += 1
         day = concert["дата, гггг-мм-дд"]
         text += f"\n{i}. {concert['title']}, {day.day}.{day.month}.{day.year}"
-    logging.error(text)
+    logging.debug(text)
     return text
 
 

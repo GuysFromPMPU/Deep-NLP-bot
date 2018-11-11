@@ -37,7 +37,7 @@ def alice_info_endpoint(request, response, user_storage):
     return response, user_storage
 
 def get_info(request, composer="чайковский"):
-    logging.error(f"get info from composer command: {request}")
+    logging.debug(f"get info for composer from command: {request}")
     r = requests.post(pavlovUrls['squad_path'], json={
         'context': composerDescriptions[composer],
         'question': [request]
