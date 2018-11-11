@@ -20,11 +20,11 @@ class BotSettings(BaseSettings):
 
     # List of active plugins
     PLUGINS = (
-        StoragePlugin(in_memory=True, save_to_file=True),
+        # StoragePlugin(in_memory=True, save_to_file=True),
         # StaffControlPlugin(prefixes=DEFAULT_PREFIXES, admins=DEFAULT_ADMINS, set_admins=True),
         # ChatMetaPlugin(),
         # UserMetaPlugin(),
-        StatisticsPlugin(),
+        # StatisticsPlugin(),
 
         # VoterPlugin(prefixes=DEFAULT_PREFIXES),
         # FacePlugin("сделай", prefixes=DEFAULT_PREFIXES),
@@ -38,7 +38,7 @@ class BotSettings(BaseSettings):
         # PairPlugin(),
         # WhoIsPlugin(),
         # YandexNewsPlugin(),
-        AboutPlugin(),
+        # AboutPlugin(),
         # BirthdayPlugin(),
         # TimePlugin(),
         # MemeDoerPlugin(),
@@ -48,19 +48,20 @@ class BotSettings(BaseSettings):
         #     "savehouse": -96322217, "octavia": -36007583}),
         # CalculatorPlugin(),
         # VideoPlugin(),
-        DispatchPlugin(),
+        # DispatchPlugin(),
         # NamerPlugin(),
         help_plugin,
+        StartPlugin(),
         MelomanPlugin(key=YANDEX_SPEECHKIT_KEY),
         # Needs tokens (see plugin's codes, some have defaults):
-        SayerPlugin(key=YANDEX_SPEECHKIT_KEY),
+        # SayerPlugin(key=YANDEX_SPEECHKIT_KEY),
 
         # Plugins for bot's control
         AntifloodPlugin(),
         NoQueuePlugin(),
-        CommandAttacherPlugin(),
+        # CommandAttacherPlugin(),
         # ForwardedCheckerPlugins(),
-        Audio2TextPlugin(key=YANDEX_SPEECHKIT_KEY),
+        # Audio2TextPlugin(key=YANDEX_SPEECHKIT_KEY),
     )
 
     help_plugin.add_plugins(PLUGINS)

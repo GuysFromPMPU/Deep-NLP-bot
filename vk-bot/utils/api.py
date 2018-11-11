@@ -85,6 +85,8 @@ class VkClient:
                 if isinstance(v, str):
                      data[k] = v.replace("\n", "\\n")
 
+
+        self.logger.error(data)
         async with self.session.post(url, data=data, **self.req_kwargs) as resp:
             try:
                 results = json_iter_parse(await resp.text())

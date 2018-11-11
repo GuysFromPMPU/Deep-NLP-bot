@@ -42,11 +42,7 @@ class MessageHandler:
 
             self.bot.logger.error(f"Error #{len(self.exceptions)}\n{exception}")
 
-            await msg.answer(
-                "[ Произошла ошибка при обработке сообщения плагинами! ]\n"
-                "[ Сообщите об этом администратору ]\n"
-                f"[ error#{len(self.exceptions)}<{random_key(6)}> ]"
-            )
+            await msg.answer('Попробуйте позже')
 
     async def core_process(self, msg):
         for plugin in sorted(self.plugins, key=lambda x: x.order[0]):
