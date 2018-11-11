@@ -2,6 +2,7 @@ import yaml
 import requests
 import pandas as pd
 import pymorphy2
+import nltk
 from faq import get_faq_response
 morph = pymorphy2.MorphAnalyzer()
 
@@ -12,11 +13,19 @@ validComposers = ['рахманинов', 'чайковский']
 
 def alice_info_endpoint(request, response, user_storage):
     composers = request.get_last_names(capitalize=False) & set(validComposers)
-    if len(composers) != 1:
-        response.set_text(get_faq_response(request.command))
-        return response, user_storage
-    response.set_text(get_info(request.command, *composers))
 
+    word_tokens = nltk.word_tokenize(request.command.lower())
+    if len(composers) == 1 or 'composer' in user_storage and 'он' in [morph.parse(word)[0].normal_form for word in word_tokens]:
+        if len(composers) == 1:
+            user_storage['composer'] = composers.pop()
+            response.set_text(get_info(request.command, user_storage['composer']))
+        else:
+            for i, word in enumerate(word_tokens):
+                if morph.parse(word)[0].normal_form == 'он':
+                    word_tokens[i] = user_storage['composer']
+            response.set_text(get_info(' '.join(word_tokens), user_storage['composer']))
+        return response, user_storage
+    response.set_text(get_faq_response(request.command))
     return response, user_storage
 
 def get_info(request, composer="чайковский"):
