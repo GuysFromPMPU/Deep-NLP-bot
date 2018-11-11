@@ -13,7 +13,7 @@ res.sort_values(by=["дата, гггг-мм-дд"], inplace=True)
 def find_concerts(composers, start_date=None, end_date=None):
     finded = res.copy()
     if start_date is None:
-        start_date = pd.to_datetime('today')
+        start_date = datetime.date.today()
 
     finded = finded[finded["дата, гггг-мм-дд"] >= start_date]
     if end_date:
