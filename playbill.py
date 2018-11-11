@@ -1,6 +1,5 @@
 import datetime
 import logging
-import operator
 
 import coloredlogs
 import pandas as pd
