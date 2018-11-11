@@ -44,6 +44,8 @@ def get_info(request, composer="чайковский"):
     })
     return r.json()[0][0]
 
+
+#ATTENTION!!! DEPRECATED! USE IT ON YOUR OWN RISK!
 def get_ner(request):
     r = requests.post(pavlovUrls['ner_path'], json={
         'context': [request]
@@ -59,3 +61,8 @@ def get_ner(request):
     if len(df) == 0:
         return None
     return df[0].iloc[0]
+
+def get_composers(tokenizedText):
+    composers = [morph.parse(word)[0].normal_form for word in tokenizedText
+                 if morph.parse(word)[0].normal_form in validComposers]
+    return composers[0] if len(composers) > 0 else None

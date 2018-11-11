@@ -14,11 +14,10 @@ from flask import Flask, request
 
 # Импортируем модуль для работы с API Алисы
 from alice_sdk import AliceRequest, AliceResponse
-from answers import get_replica
 # Импортируем модуль с логикой игры
 from dialogs import handle_dialog
+from info import get_info, get_composers
 from faq import get_faq_response
-from info import get_info, get_ner
 from playbill import get_all_playbill
 
 coloredlogs.install()
@@ -57,10 +56,10 @@ def main():
 def processText():
     text = request.json['request']
     logging.info(f"text to answer: {text}")
-    composer = get_ner(text)
+    word_tokens = nltk.word_tokenize(text.lower())
+    composer = get_composers(word_tokens)
     global composerContext
     morph = pymorphy2.MorphAnalyzer()
-    word_tokens = nltk.word_tokenize(text.lower())
     if composer or request.json['id'] in list(composerContext.keys()) and 'он'\
             in [morph.parse(word)[0].normal_form for word in word_tokens]:
         if composer:
