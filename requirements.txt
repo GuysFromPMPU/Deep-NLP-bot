@@ -1,1 +1,9 @@
+humanize==0.5.1
+recastai==4.0.0
+pymorphy2[fast]==0.8
+requests==2.20.0
+nltk==3.2.5
+pandas==0.22.0
 Flask==1.0.2
+coloredlogs==9.0
+PyYAML==3.13

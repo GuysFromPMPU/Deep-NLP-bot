@@ -7,11 +7,6 @@ import pymorphy2
 
 morph = pymorphy2.MorphAnalyzer()
 
-
-class ChatStatus(Enum):
-    Buying = auto()
-
-
 class BuyStatus(Enum):
     Choosing = auto()
     Selected = auto()
