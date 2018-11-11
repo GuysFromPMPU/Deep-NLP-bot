@@ -13,7 +13,7 @@ morph = pymorphy2.MorphAnalyzer()
 
 composerDescriptions = yaml.load(open('composerDescriptions.yaml', 'r', encoding="utf-8"))
 pavlovUrls = yaml.load(open('urls.yaml', 'r', encoding="utf-8"))
-validComposers = ['рахманинов', 'чайковский']
+validComposers = ['рахманинов', 'чайковский', 'бузов']
 
 
 def alice_info_endpoint(request, response, user_storage):
